@@ -7,28 +7,27 @@ import requests
 
 #To create a GUI
 from tkinter import *
-from tkinter import messagebox
 
 #GUI window configuration
 window = Tk()
 window.title("KeykeA Currency Converter App")
-window.geometry("600x6000")
+window.geometry("600x600")
 
 #Create a label for the header
 label_header = Label(window, text="KeykeA FX\nData Services", font=("Arial Bold", 20))
 label_header.pack(pady=20)
 
 #Create a label for where user inputs currency from
-youTransfer_label = Label(window, text="YouTransfer:", font=("Arial", 12))
-youTransfer_label.pack(pady=10)
-youTransfer_window_entry = Entry(window, font=("Arial", 16), )
-youTransfer_window_entry.pack(pady=20)
+Base_currency_label = Label(window, text="YouTransfer:", font=("Arial", 12))
+Base_currency_label.pack(pady=10)
+Base_currency_window_entry = Entry(window, font=("Arial", 16), )
+Base_currency_window_entry.pack(pady=20)
 
-#Create a label for where user inputs recipient currency
-Recipient_label = Label(window, text="Recipient:", font=("Arial", 12))
-Recipient_label.pack(pady=10)
-Recipient_window_entry = Entry(window, font=("Arial", 16))
-Recipient_window_entry.pack(pady=20)
+#Create a label for where user inputs currency to
+New_currency_label = Label(window, text="Recipient:", font=("Arial", 12))
+New_currency_label.pack(pady=10)
+New_currency_window_entry = Entry(window, font=("Arial", 16))
+New_currency_window_entry.pack(pady=20)
 
 #Create a label for where user inputs the amount
 amount_label = Label(window, text="Amount:", font=("Arial", 12))
@@ -48,46 +47,46 @@ def convert_currency():
     # Parse the response
     data = response.json()["rates"]
     # Application supported currencies
-    currencies = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "NGN", "VND", "HKD", "SGD"]
+    Supported_currencies = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "NGN", "VND", "HKD", "SGD"]
     # display currency options
-    print("The supported currencies on this application are: ", ", ".join(currencies))
+    print("The supported currencies on this application are: ", ", ".join(Supported_currencies))
 
     # Getting the user's input
     while True: #Using a while loop to execute the statements below
         Base_Currency = input("Enter your currency: ").upper()
         New_Currency = input("Enter the currency you want to convert into : ").upper()
 
-        if Base_Currency not in currencies and New_Currency not in currencies:
+        if Base_Currency not in Supported_currencies and New_Currency not in Supported_currencies:
             print("Error: Both currencies are not listed on the supported currencies" "\n" "Please check supported currencies and try again.")
-        elif Base_Currency not in currencies:
+        elif Base_Currency not in Supported_currencies:
             print("Error: Your currency code is not listed on the supported currencies" "\n" "Please check supported currencies and try again.")
-        elif New_Currency not in currencies:
+        elif New_Currency not in Supported_currencies:
             print("Error: Recipient currency code is not listed on the supported currencies" "\n" "Please check supported currencies and try again.")
         else:
-            amount = float(input("Enter amount: ")) #enter amount to be converted.
+            amount = float(input("Enter amount to be converted: "))
             break
 
     # Calculate exchange rates between currencies using intermediary (third party) currencies listed on the supported currencies list.
-    intermediary_currencies = [item for item in currencies if item not in [Base_Currency, New_Currency]]#Display other eight intermediary currencies
+    intermediary_currencies = [value for value in Supported_currencies if value not in [Base_Currency, New_Currency]]#Display other eight intermediary currencies
     intermediary_rates = []
     for currency in intermediary_currencies:
         firstRate = data[currency] / data[Base_Currency] #To calculate the user's currency rate
         secondRate = data[New_Currency] / data[currency]#To calculate the recipient's currencyrate
-        totalRate = firstRate * secondRate #To get the total rate
-        profit = 0.01 * totalRate #Important note: 1% of conversion rate is retained as the tiny font clause
-        intermediary_rates.append((currency, totalRate, profit)) #To add all the rate and profits of the other eight intermediaries.
+        Final_Rate = firstRate * secondRate #To get the final rate
+        profit = 0.01 * Final_Rate #Important note: 1% of conversion rate is retained as the tiny font clause
+        intermediary_rates.append((currency, Final_Rate, profit)) #To add all the rate and profits of the other eight intermediaries.
         print(f"1 {Base_Currency} = {firstRate} {currency}")
         print(f"1 {currency} = {secondRate} {New_Currency}")
-        print(f"Conversion rate {Base_Currency} to {New_Currency} using {currency}: {firstRate} * {secondRate} = {totalRate}")
+        print(f"Conversion rate {Base_Currency} to {New_Currency} using {currency}: {firstRate} * {secondRate} = {Final_Rate}")
         print(f"Profit: {profit}")
 
     # Display all intermediary rates and profits
         print("Intermediary Rates:")
-    for totalRate in intermediary_rates:
-        print(f"{totalRate[0]}: {totalRate[1]:.4f}  Profit: {totalRate[2]:.3f}")
+    for Final_Rate in intermediary_rates:
+        print(f"{Final_Rate[0]}: {Final_Rate[1]:.4f}  Profit: {Final_Rate[2]:.3f}")
 
 
-    # find the best conversion path
+    #Determining the best conversion path
     best_rate = 0
     best_currency = ""
     for currency in intermediary_currencies:
@@ -101,11 +100,10 @@ def convert_currency():
             print(f"Profit margin is:  {profit:.3f}")
 
 #Create a button for the user to click after inputing details
-convert_button = Button(window, text="Convert", font=("Arial Bold", 16), command=convert_currency)
-convert_button.pack(pady=20)
+click_button = Button(window, text="Convert", font=("Arial Bold", 16), command=convert_currency)
+click_button.pack(pady=20)
 
-#Display box
-messagebox.showinfo("Conversion Result", "The conversion result will be displayed here.")
+
 
 window.mainloop()
 
