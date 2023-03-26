@@ -54,31 +54,31 @@ def convert_currency():
 
     # Getting the user's input
     while True: #Using a while loop to execute the statements below
-        currency_to = input("Enter your currency: ").upper() #enter currency from
-        theyReceive = input("Enter the currency you want to convert into : ").upper() #enter currency to
+        Base_Currency = input("Enter your currency: ").upper()
+        New_Currency = input("Enter the currency you want to convert into : ").upper()
 
-        if currency_to not in currencies and theyReceive not in currencies:
+        if Base_Currency not in currencies and New_Currency not in currencies:
             print("Error: Both currencies are not listed on the supported currencies" "\n" "Please check supported currencies and try again.")
-        elif currency_to not in currencies:
+        elif Base_Currency not in currencies:
             print("Error: Your currency code is not listed on the supported currencies" "\n" "Please check supported currencies and try again.")
-        elif theyReceive not in currencies:
+        elif New_Currency not in currencies:
             print("Error: Recipient currency code is not listed on the supported currencies" "\n" "Please check supported currencies and try again.")
         else:
             amount = float(input("Enter amount: ")) #enter amount to be converted.
             break
 
     # Calculate exchange rates between currencies using intermediary (third party) currencies listed on the supported currencies list.
-    intermediary_currencies = [item for item in currencies if item not in [currency_to, theyReceive]]#Display other eight intermediary currencies
+    intermediary_currencies = [item for item in currencies if item not in [Base_Currency, New_Currency]]#Display other eight intermediary currencies
     intermediary_rates = []
     for currency in intermediary_currencies:
-        firstRate = data[currency] / data[currency_to] #To calculate the user's currency rate
-        secondRate = data[theyReceive] / data[currency]#To calculate the recipient's currencyrate
+        firstRate = data[currency] / data[Base_Currency] #To calculate the user's currency rate
+        secondRate = data[New_Currency] / data[currency]#To calculate the recipient's currencyrate
         totalRate = firstRate * secondRate #To get the total rate
         profit = 0.01 * totalRate #Important note: 1% of conversion rate is retained as the tiny font clause
         intermediary_rates.append((currency, totalRate, profit)) #To add all the rate and profits of the other eight intermediaries.
-        print(f"1 {currency_to} = {firstRate} {currency}")
-        print(f"1 {currency} = {secondRate} {theyReceive}")
-        print(f"Conversion rate {currency_to} to {theyReceive} using {currency}: {firstRate} * {secondRate} = {totalRate}")
+        print(f"1 {Base_Currency} = {firstRate} {currency}")
+        print(f"1 {currency} = {secondRate} {New_Currency}")
+        print(f"Conversion rate {Base_Currency} to {New_Currency} using {currency}: {firstRate} * {secondRate} = {totalRate}")
         print(f"Profit: {profit}")
 
     # Display all intermediary rates and profits
@@ -91,12 +91,12 @@ def convert_currency():
     best_rate = 0
     best_currency = ""
     for currency in intermediary_currencies:
-        rate1 = data[currency_to] / data[currency]
-        rate2 = data[theyReceive] / data[currency]
+        rate1 = data[Base_Currency] / data[currency]
+        rate2 = data[New_Currency] / data[currency]
         if rate1 * rate2 > best_rate:
             best_rate = 100 * profit * amount
             best_currency = currency
-            print("\n" f"The best intermediary conversion conversion path is: {currency_to} -> {best_currency} -> {theyReceive}")
+            print("\n" f"The best intermediary conversion conversion path is: {Base_Currency} -> {best_currency} -> {New_Currency}")
             print(f"The best rate for you is: {best_rate:.4f}")
             print(f"Profit margin is:  {profit:.3f}")
 
