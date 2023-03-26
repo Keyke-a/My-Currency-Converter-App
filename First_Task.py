@@ -57,7 +57,6 @@ print("Intermediary Rates:")
 for Final_rate in intermediary_rates:
     print(f"{Final_rate[0]}: {Final_rate[1]:.4f}  Profit: {Final_rate[2]:.3f}")
 
-
 #Determining the best conversion path
 best_rate = 0
 best_currency = ""
